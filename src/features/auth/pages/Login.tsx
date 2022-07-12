@@ -31,7 +31,7 @@ const LoginPage: React.FC = () => {
                     layoutType="vertical"
                     formItems={[
                         {
-                            label: 'Tài khoản',
+                            label: 'Tài khoản212',
                             name: 'username',
                             initialValue: 'admin@gmail.com',
                             rules: [{ required: true, message: 'Vui lòng nhập tài khoản!' }],
