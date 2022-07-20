@@ -1,41 +1,37 @@
-import { Tabs ,Table} from "antd";
+import { Tabs, Table } from 'antd';
 const { TabPane } = Tabs;
 const contract1 = [
     {
         key: '1',
-        id:'HD01',
+        id: 'HD01',
         name: 'BA',
-        time : '2 years'
-        
+        time: '2 years',
     },
-]
+];
 const contract2 = [
     {
         key: '1',
-        id:'HD01',
+        id: 'HD01',
         name: 'FE',
-        time : '2 years'
-        
+        time: '2 years',
     },
-]
+];
 const contract3 = [
     {
         key: '1',
-        id:'HD01',
+        id: 'HD01',
         name: 'BE',
-        time : '2 years'
-        
+        time: '2 years',
     },
-]
+];
 const contract4 = [
     {
         key: '1',
-        id:'HD01',
+        id: 'HD01',
         name: 'Tester',
-        time : '2 years'
-        
+        time: '2 years',
     },
-]
+];
 const contractColumns = [
     {
         title: 'STT',
@@ -57,91 +53,74 @@ const contractColumns = [
         dataIndex: 'time',
         key: 'time',
     },
-]
+];
 export const dataSource = [
     {
         key: '1',
         name: 'Nguyen Van A',
         age: 32,
-        number: 1111111,
+        phone: 1111111,
         address: 'Hà Nội',
-        description : 
-            <Tabs defaultActiveKey="1" >
+        description: (
+            <Tabs defaultActiveKey="1">
                 <TabPane tab="Thông tin nhân viên" key="1">
-                    <Table 
-                        
-                    />
+                    <Table />
                 </TabPane>
                 <TabPane tab="Hợp đồng chính thức" key="2">
-                    <Table 
-                        dataSource={contract1} columns = {contractColumns}
-                    />
-                </TabPane>            
-            </Tabs>            
+                    <Table dataSource={contract1} columns={contractColumns} />
+                </TabPane>
+            </Tabs>
+        ),
     },
     {
         key: '2',
         name: 'Nguyen Van B',
         age: 33,
-        number: 1111111,
+        phone: 1111111,
         address: 'Hà Nội',
-        description : 
-            <Tabs defaultActiveKey="1" >
-                <TabPane tab="Thông tin nhân viên" key="1">
-                                
-                </TabPane>
+        description: (
+            <Tabs defaultActiveKey="1">
+                <TabPane tab="Thông tin nhân viên" key="1"></TabPane>
                 <TabPane tab="Hợp đồng chính thức" key="2">
-                    <Table 
-                        dataSource={contract2} columns = {contractColumns}
-                    />
-                </TabPane>            
-            </Tabs>   
+                    <Table dataSource={contract2} columns={contractColumns} />
+                </TabPane>
+            </Tabs>
+        ),
     },
     {
         key: '3',
         name: 'Nguyen Van C',
         age: 34,
-        number: 1111111,
+        phone: 1111111,
         address: 'Nam Định',
-        description : 
-            <Tabs defaultActiveKey="1" >
-                <TabPane tab="Thông tin nhân viên" key="1">
-                                
-                </TabPane>
+        description: (
+            <Tabs defaultActiveKey="1">
+                <TabPane tab="Thông tin nhân viên" key="1"></TabPane>
                 <TabPane tab="Hợp đồng chính thức" key="2">
-                    <Table 
-                        dataSource={contract3} columns = {contractColumns}
-                    />
-                </TabPane>            
-            </Tabs>   
+                    <Table dataSource={contract3} columns={contractColumns} />
+                </TabPane>
+            </Tabs>
+        ),
     },
     {
         key: '4',
         name: 'Nguyen Van D',
         age: 35,
-        number: 1111111,
+        phone: 1111111,
         address: 'Ninh Bình',
-        description : 
-            <Tabs defaultActiveKey="1" >
+        description: (
+            <Tabs defaultActiveKey="1">
                 <TabPane tab="Thông tin nhân viên" key="1">
-                    <p> 
-                        
-                    </p>
+                    <p></p>
                 </TabPane>
                 <TabPane tab="Hợp đồng chính thức" key="2">
-                    <Table 
-                        dataSource={contract4} columns = {contractColumns}
-                    />
-                </TabPane>            
-            </Tabs>   
+                    <Table dataSource={contract4} columns={contractColumns} />
+                </TabPane>
+            </Tabs>
+        ),
     },
 ];
 export const columns = [
-    {
-        title: '',
-        dataIndex: 'add',
-        key: 'add'
-    },
     {
         title: 'STT',
         dataIndex: 'key',
@@ -159,8 +138,8 @@ export const columns = [
     },
     {
         title: 'SĐT',
-        dataIndex: 'number',
-        key: 'number',
+        dataIndex: 'phone',
+        key: 'phone',
     },
     {
         title: 'Địa chỉ',
@@ -172,19 +151,4 @@ export const columns = [
         dataIndex: 'type',
         key: 'type',
     },
-    {
-        title: 'Action',
-        dataIndex: '',
-        key: 'x',
-        render: () => <a>Delete</a>,
-      },
-
 ];
-
-
-export const information = [
-    
-] 
-export const informationColumns = [
-       
-]
