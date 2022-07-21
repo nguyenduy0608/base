@@ -1,6 +1,6 @@
 import { AudioOutlined, DeleteOutlined, EditOutlined, PlusOutlined, UploadOutlined } from '@ant-design/icons';
 import { Button, Input, message, Select, Space, Table, Upload } from 'antd';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import ModalForm from './modalform';
 import { columns, dataSource } from './service';
 
@@ -9,19 +9,17 @@ const { Search } = Input;
 const suffix = (
     <AudioOutlined
         style={{
-            fontSize: 16,
+            fontSize:16,
             color: '#1890ff',
         }}
     />
 );
-
 const initialValue = {
     name: '',
     age: '',
     phone: '',
     address: '',
 };
-
 const EmployeePage = () => {
     const props = {
         name: 'file',
@@ -43,29 +41,31 @@ const EmployeePage = () => {
     };
     const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
     const [isModalVisibleFix, setIsModalVisibleFix] = useState<boolean>(false);
-    const [employees, setEmployees] = useState([]);
+    const [employees, setEmployees] = useState<any>([]);
     const [dataSourceEmployee, setDataSourceEmployee] = useState(dataSource);
+    const [copyDataSourceEmploy, setCopyDataSourceEmploy] = useState(dataSourceEmployee);
     const [initialValues, setInitialValues] = useState(initialValue);
-    const [dataIndex, setDataIndex] = useState(-1);
-    const [data, setData] = useState([]);
+    const [searchKey, setSearchKey] = useState('');
     console.log('initialValues', initialValues);
     const onChange = (key: any) => {
         console.log(key);
     };
-    const handleChange = (value: any) => {
-        console.log(`selected ${value}`);
+    const handleChange = (e: any) => setSearchKey(e.target.value);
+    const onSearch = (arr: any, keyword: any) => {
+        const matchedArr = arr.filter((ele: any) => ele.name.toLowerCase().includes(keyword.toLowerCase()));
+        setDataSourceEmployee(matchedArr);
     };
-    const onSearch = (value: any) => console.log(value);
+    useEffect(() => {
+        onSearch(copyDataSourceEmploy, searchKey);
+    }, [searchKey]);
 
     const rowSelection = {
         onChange: (selectedRowKeys: any, selectedRows: any) => {
             console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
             setEmployees(selectedRows);
-            setDataIndex(selectedRowKeys);
             if (selectedRows.length === 0) {
                 setInitialValues(initialValue);
             }
-
             if (selectedRows.length > 0 && selectedRows.length < 2) {
                 setInitialValues(selectedRows[0]);
             }
@@ -75,7 +75,6 @@ const EmployeePage = () => {
             name: record.name,
         }),
     };
-
     const onFinishFix = (values: any) => {
         const clonedDataSourceEmployee = [...dataSourceEmployee];
         clonedDataSourceEmployee.forEach((employee: any, index) => {
@@ -84,23 +83,17 @@ const EmployeePage = () => {
             }
         });
         console.log('object', clonedDataSourceEmployee);
-
         setDataSourceEmployee(clonedDataSourceEmployee);
-
         console.log('Success:', values);
-        //     const clonedDataSourceEmployee = [...dataSourceEmployee];
-        //     setDataSourceEmployee(clonedDataSourceEmployee.splice(Number(dataIndex) - 1, 1));
-        //     setDataSourceEmployee(clonedDataSourceEmployee.splice(Number(dataIndex) - 1, 0, values));
-        //     setDataSourceEmployee([...clonedDataSourceEmployee]);
     };
     const onFinish = (values: any) => {
         setDataSourceEmployee([...dataSourceEmployee, values]);
+        setCopyDataSourceEmploy([...dataSourceEmployee, values]);
     };
 
     const onFinishFailed = (errorInfo: any) => {
         console.log('Failed:', errorInfo);
     };
-
     const handleSubmit = () => {
         setIsModalVisible(false);
         setInitialValues(initialValue);
@@ -116,7 +109,6 @@ const EmployeePage = () => {
     const handleCancel = () => {
         setIsModalVisible(false);
     };
-
     const handleSubmitFix = () => {
         setIsModalVisibleFix(false);
         setInitialValues(initialValue);
@@ -125,7 +117,6 @@ const EmployeePage = () => {
     const showModalFix = () => {
         setIsModalVisibleFix(true);
     };
-
     const handleOkFix = () => {
         setIsModalVisibleFix(false);
     };
@@ -134,21 +125,17 @@ const EmployeePage = () => {
     };
     const handleDelete = () => {
         const clonedDataSourceEmployee = [...dataSourceEmployee];
-        const clonedDataIndex:any = dataIndex;
-        clonedDataSourceEmployee.forEach((employee: any, index) => {
-            setDataSourceEmployee(
-                clonedDataSourceEmployee.filter((employee:any) => {
-                    for(let a = 0;a < clonedDataIndex.length;a++) {
-                        if(employee.key === clonedDataIndex[a]) {
-                            return false;
-                    }
-                } return true;
-            })
-            );
+        let filterEmployee: any = clonedDataSourceEmployee;
+        employees.forEach((empl: any) => {
+            filterEmployee = filterEmployee.filter((employee: any) => employee.key !== empl?.key);
         });
-        console.log('dataIndex :', clonedDataIndex);
-    };
 
+        console.log('filterEmployee', filterEmployee);
+
+        setDataSourceEmployee(filterEmployee);
+        setCopyDataSourceEmploy(filterEmployee);
+        console.log('dataIndex :', filterEmployee);
+    };
     return (
         <div>
             <h2> Danh sách nhân viên</h2>
@@ -159,16 +146,14 @@ const EmployeePage = () => {
                     margin: '0 16px',
                 }}
             >
-                <Space direction="vertical">
-                    <Search
-                        placeholder="Nhập tên nhân viên..."
-                        allowClear
-                        onSearch={onSearch}
-                        style={{
-                            width: 400,
-                        }}
-                    />
-                </Space>
+                <Input
+                    placeholder="Nhập tên nhân viên..."
+                    allowClear
+                    style={{
+                        width: 400,
+                    }}
+                    onChange={handleChange}
+                />
                 <div style={{ display: 'flex' }}>
                     <Upload {...props}>
                         <Button icon={<UploadOutlined />}>Upload file</Button>
@@ -182,7 +167,6 @@ const EmployeePage = () => {
                             Sửa
                         </Button>
                     )}
-
                     {employees.length > 0 && (
                         <Button
                             type="dashed"
@@ -197,7 +181,6 @@ const EmployeePage = () => {
                     )}
                 </div>
             </div>
-
             {
                 <ModalForm
                     initialValues={initialValues}
@@ -209,7 +192,6 @@ const EmployeePage = () => {
                     onCancel={handleCancel}
                 />
             }
-
             <ModalForm
                 initialValues={initialValues}
                 handleSubmit={handleSubmitFix}
@@ -219,7 +201,6 @@ const EmployeePage = () => {
                 onOk={handleOkFix}
                 onCancel={handleCancelFix}
             />
-
             <Table
                 style={{
                     margin: '32px 16px',
@@ -238,5 +219,4 @@ const EmployeePage = () => {
         </div>
     );
 };
-
 export default EmployeePage;

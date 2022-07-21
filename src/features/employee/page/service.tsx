@@ -57,7 +57,7 @@ const contractColumns = [
 export const dataSource = [
     {
         key: '1',
-        name: 'Nguyen Van A',
+        name: 'Nguyen Van Anh',
         age: 32,
         phone: 1111111,
         address: 'Hà Nội',
@@ -74,7 +74,7 @@ export const dataSource = [
     },
     {
         key: '2',
-        name: 'Nguyen Van B',
+        name: 'Nguyen Van Binh',
         age: 33,
         phone: 1111111,
         address: 'Hà Nội',
@@ -89,7 +89,7 @@ export const dataSource = [
     },
     {
         key: '3',
-        name: 'Nguyen Van C',
+        name: 'Ngo Van Huy',
         age: 34,
         phone: 1111111,
         address: 'Nam Định',
@@ -104,7 +104,7 @@ export const dataSource = [
     },
     {
         key: '4',
-        name: 'Nguyen Van D',
+        name: 'Tran Van Duong',
         age: 35,
         phone: 1111111,
         address: 'Ninh Bình',
