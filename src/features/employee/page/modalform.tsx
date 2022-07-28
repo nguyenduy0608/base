@@ -8,7 +8,8 @@ interface ModalProps {
     onFinish: any;
     onFinishFailed: any;
     handleSubmit: any;
-
+    onClick?: any;
+    onChange?: any;
     initialValues: any;
 }
 const { Option } = Select;
@@ -20,6 +21,8 @@ const ModalForm = ({
     onFinishFailed,
     handleSubmit,
     initialValues,
+    onChange,
+    onClick,
 }: ModalProps) => {
     return (
         <Modal destroyOnClose title="Thêm nhân viên" visible={isVisible} onCancel={onCancel} onOk={onOk} footer={null}>
@@ -36,27 +39,24 @@ const ModalForm = ({
                 onFinishFailed={onFinishFailed}
                 autoComplete="off"
             >
-                <Form.Item label="STT" name="key">
+                <Form.Item label="STT" name="id">
                     <Input />
                 </Form.Item>
                 <Form.Item label="Tên nhân viên" name="name">
                     <Input />
                 </Form.Item>
-                <Form.Item label="Tuổi" name="age">
+                <Form.Item label="Value" name="value">
                     <Input />
                 </Form.Item>
-                <Form.Item label="Số điện thoại" name="phone">
+                <Form.Item label="Label" name="label">
                     <Input />
                 </Form.Item>
-                <Form.Item label="Địa chỉ" name="address">
-                    <Select
-                        placeholder="Chọn tỉnh/thành"
-                        // onChange={handleChange}
-                    >
-                        <Option value="Hà Nội">Hà Nội</Option>
-                        <Option value="Nam Định">Nam Định</Option>
-                        <Option value="Ninh Bình">Ninh Bình</Option>
-                    </Select>
+                <Form.Item label="Avatar" name="avatar">
+                    <Input type="file" accept="image/png, image/gif, image/jpeg" onChange={onChange}  />{' '}
+                    <Button onClick={onClick}>Upload</Button>
+                </Form.Item>
+                <Form.Item label="CreatedAt" name="createdAt">
+                    <Input />
                 </Form.Item>
                 <Form.Item
                     name="remember"

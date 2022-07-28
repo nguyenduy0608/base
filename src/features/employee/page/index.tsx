@@ -1,24 +1,16 @@
-import { AudioOutlined, DeleteOutlined, EditOutlined, PlusOutlined, UploadOutlined } from '@ant-design/icons';
-import { Button, Input, message, Select, Space, Table, Upload } from 'antd';
+import { DeleteOutlined, EditOutlined, PlusOutlined, UploadOutlined } from '@ant-design/icons';
+import { Button, Input, message, Table, Upload, Pagination } from 'antd';
+import axios from 'axios';
+import { error } from 'console';
 import { useState, useEffect } from 'react';
 import ModalForm from './modalform';
-import { columns, dataSource } from './service';
+import { columns } from './service';
 
-const { Option } = Select;
-const { Search } = Input;
-const suffix = (
-    <AudioOutlined
-        style={{
-            fontSize:16,
-            color: '#1890ff',
-        }}
-    />
-);
 const initialValue = {
     name: '',
-    age: '',
-    phone: '',
-    address: '',
+    value: '',
+    label: '',
+    avatar: '',
 };
 const EmployeePage = () => {
     const props = {
@@ -31,7 +23,6 @@ const EmployeePage = () => {
             if (info.file.status !== 'uploading') {
                 console.log(info.file, info.fileList);
             }
-
             if (info.file.status === 'done') {
                 message.success(`${info.file.name} file uploaded successfully`);
             } else if (info.file.status === 'error') {
@@ -39,28 +30,48 @@ const EmployeePage = () => {
             }
         },
     };
+
     const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
     const [isModalVisibleFix, setIsModalVisibleFix] = useState<boolean>(false);
-    const [employees, setEmployees] = useState<any>([]);
-    const [dataSourceEmployee, setDataSourceEmployee] = useState(dataSource);
-    const [copyDataSourceEmploy, setCopyDataSourceEmploy] = useState(dataSourceEmployee);
+    const [employees, setEmployees] = useState([]);
+    const [dataSourceEmployee, setDataSourceEmployee] = useState([]);
     const [initialValues, setInitialValues] = useState(initialValue);
     const [searchKey, setSearchKey] = useState('');
-    console.log('initialValues', initialValues);
-    const onChange = (key: any) => {
-        console.log(key);
+    const [callback, setCallback] = useState(false);
+    const [current, setCurrent] = useState(1);
+    const [loading, setLoading] = useState(false);
+    const [count, setCount] = useState();
+    const [image, setImage] = useState('');
+    const [img,setImg]  =useState('');
+    const handleUpload = (e: any) => {
+        setImage(e.target.files[0]);
+    };
+    const uploadImage = async (e: any) => {
+        const formData = new FormData();
+        formData.append('file', image);
+        formData.append('upload_preset', 'waz4uzbu');
+        formData.append('cloud_name', 'duydzvl');
+        const res = await fetch('https://api.cloudinary.com/v1_1/duydzvl/image/upload', {
+            method: 'POST',
+            body: formData,
+        });
+        const data = await res.json();
+        console.log('🚀 ~ file: index.tsx ~ line 53 ~ uploadImage ~ res', data);
+        setImg(data.secure_url)
+        
+        if (res.status === 200) {
+            setCallback(!callback);
+        }
+    };
+
+    const onChange = (page: number) => { 
+        console.log(page);
+        setCurrent(page);
     };
     const handleChange = (e: any) => setSearchKey(e.target.value);
-    const onSearch = (arr: any, keyword: any) => {
-        const matchedArr = arr.filter((ele: any) => ele.name.toLowerCase().includes(keyword.toLowerCase()));
-        setDataSourceEmployee(matchedArr);
-    };
-    useEffect(() => {
-        onSearch(copyDataSourceEmploy, searchKey);
-    }, [searchKey]);
-
-    const rowSelection = {
-        onChange: (selectedRowKeys: any, selectedRows: any) => {
+    const axios = require('axios');
+    const rowSelection: object = {
+        onChange: (selectedRowKeys: number, selectedRows: any) => {
             console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
             setEmployees(selectedRows);
             if (selectedRows.length === 0) {
@@ -70,27 +81,44 @@ const EmployeePage = () => {
                 setInitialValues(selectedRows[0]);
             }
         },
-        getCheckboxProps: (record: any) => ({
-            disabled: record.name === 'Disabled User',
-            name: record.name,
-        }),
-    };
-    const onFinishFix = (values: any) => {
-        const clonedDataSourceEmployee = [...dataSourceEmployee];
-        clonedDataSourceEmployee.forEach((employee: any, index) => {
-            if (employee.key === values.key) {
-                clonedDataSourceEmployee[index] = values;
-            }
-        });
-        console.log('object', clonedDataSourceEmployee);
-        setDataSourceEmployee(clonedDataSourceEmployee);
-        console.log('Success:', values);
-    };
-    const onFinish = (values: any) => {
-        setDataSourceEmployee([...dataSourceEmployee, values]);
-        setCopyDataSourceEmploy([...dataSourceEmployee, values]);
     };
 
+    const onFinish = async (values: any) => {
+        const { createdAt, name, value, label } = values;
+
+        const res = await axios.post('https://60bc9e1fb8ab37001759f62c.mockapi.io/api/todo/user', {
+            createdAt,
+            name,
+            avatar: img,
+            value,
+            label,
+        });
+        console.log(values);
+        if (res.status === 201) {
+            setCallback(!callback);
+        }
+    };
+    const onFinishFix = (values: any) => {
+        const { createdAt, name, value, label } = values;
+        const clonedDataSourceEmployee = [...dataSourceEmployee];
+        clonedDataSourceEmployee.forEach(async (employee: any, index) => {
+            if (employee.id === values.id) {
+                console.log('ID:', values.id);
+                const res = await axios.put(`https://60bc9e1fb8ab37001759f62c.mockapi.io/api/todo/user/${values.id}`, {
+                    createdAt,
+                    name,
+                    avatar: img,
+                    value,
+                    label,
+                });
+                if (res.status === 200) {
+                    setCallback(!callback);
+                }
+            }
+        });
+
+        console.log('Success:', values);
+    };
     const onFinishFailed = (errorInfo: any) => {
         console.log('Failed:', errorInfo);
     };
@@ -109,10 +137,11 @@ const EmployeePage = () => {
     const handleCancel = () => {
         setIsModalVisible(false);
     };
+
+    // FIX
     const handleSubmitFix = () => {
         setIsModalVisibleFix(false);
         setInitialValues(initialValue);
-        console.log('dataSourceEmployee :', dataSourceEmployee);
     };
     const showModalFix = () => {
         setIsModalVisibleFix(true);
@@ -124,18 +153,40 @@ const EmployeePage = () => {
         setIsModalVisibleFix(false);
     };
     const handleDelete = () => {
-        const clonedDataSourceEmployee = [...dataSourceEmployee];
-        let filterEmployee: any = clonedDataSourceEmployee;
-        employees.forEach((empl: any) => {
-            filterEmployee = filterEmployee.filter((employee: any) => employee.key !== empl?.key);
+        const clonedDataSourceEmployee = [...employees];
+        console.log('clonedDataSourceEmployee:', clonedDataSourceEmployee);
+        clonedDataSourceEmployee.forEach(async (empl: any, index: number) => {
+            const res = await axios.delete(`https://60bc9e1fb8ab37001759f62c.mockapi.io/api/todo/user/${empl.id}`);
+            if (index === employees.length - 1) {
+                console.log('delete');
+                setCallback(!callback);
+            }
+            if (res.status === 200) {
+                setCallback(!callback);
+            }
         });
-
-        console.log('filterEmployee', filterEmployee);
-
-        setDataSourceEmployee(filterEmployee);
-        setCopyDataSourceEmploy(filterEmployee);
-        console.log('dataIndex :', filterEmployee);
     };
+    const fetchApi = async () => {
+        setLoading(true);
+        try {
+            const url = searchKey
+                ? `https://60bc9e1fb8ab37001759f62c.mockapi.io/api/todo/user?name=${searchKey}`
+                : `https://60bc9e1fb8ab37001759f62c.mockapi.io/api/todo/user?page=${current}&limit=10`;
+            const res = await axios.get(url);
+            setDataSourceEmployee(res.data.items);
+            console.log(res.data.items);
+            setLoading(false);
+            setCount(res.data.count);
+        } catch (error) {
+            setLoading(false);
+            console.log(error);
+        }
+    };
+
+    useEffect(() => {
+        fetchApi();
+    }, [current, searchKey, callback]);
+
     return (
         <div>
             <h2> Danh sách nhân viên</h2>
@@ -181,17 +232,17 @@ const EmployeePage = () => {
                     )}
                 </div>
             </div>
-            {
-                <ModalForm
-                    initialValues={initialValues}
-                    handleSubmit={handleSubmit}
-                    onFinishFailed={onFinishFailed}
-                    onFinish={onFinish}
-                    isVisible={isModalVisible}
-                    onOk={handleOk}
-                    onCancel={handleCancel}
-                />
-            }
+            <ModalForm
+                initialValues={initialValues}
+                handleSubmit={handleSubmit}
+                onFinishFailed={onFinishFailed}
+                onFinish={onFinish}
+                isVisible={isModalVisible}
+                onOk={handleOk}
+                onCancel={handleCancel}
+                onClick={uploadImage}
+                onChange={handleUpload}
+            />
             <ModalForm
                 initialValues={initialValues}
                 handleSubmit={handleSubmitFix}
@@ -200,22 +251,24 @@ const EmployeePage = () => {
                 isVisible={isModalVisibleFix}
                 onOk={handleOkFix}
                 onCancel={handleCancelFix}
+                onClick={uploadImage}
+                onChange={handleUpload}
             />
             <Table
+                loading={loading}
                 style={{
                     margin: '32px 16px',
                 }}
                 dataSource={dataSourceEmployee}
+                rowKey={(record: any) => record?.id}
                 columns={columns}
-                expandable={{
-                    expandedRowRender: (record) => <div>{record.description}</div>,
-                    rowExpandable: (record) => record.name !== 'Not Expandable',
-                }}
                 rowSelection={{
                     type: 'checkbox',
                     ...rowSelection,
                 }}
+                pagination={false}
             />
+            <Pagination current={current} onChange={onChange} total={count} />;
         </div>
     );
 };
